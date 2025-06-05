@@ -1,19 +1,7 @@
 
 from os import listdir
-from os.path import isdir, getsize, isfile, abspath, join, basename
-from logger.log import stacktrace_log
+from os.path import isdir, getsize, isfile, abspath, join, commonpath
 import traceback
-
-def print_dir_contents(dir):
-    try:
-        logs = []
-        for file in listdir(dir):
-            logs.append(f'- {basename(file)}: file_size={getsize(file)} bytes, is_dir={isdir(file)}')
-    except:
-        return f'Error: something went wrong'
-    
-    return " ".join(logs)
-
 
 def get_files_info(working_directory, directory=None):
 
@@ -29,12 +17,10 @@ def get_files_info(working_directory, directory=None):
             return f'Error: "{directory}" is not a directory'
         
         logs = []
-        for file in listdir(target_dir):
-
-            if basename(file) == '__pycache__':
+        for filename in listdir(target_dir):
+            if filename == '__pycache__':
                 continue
-
-            filename = basename(file)
+           
             full_path_file_name = join(target_dir, filename)
             # stacktrace_log(file)
             filesize = 0
@@ -54,13 +40,8 @@ def no_escape(working_dir, directory):
     abs_path_working_dir = abspath(working_dir)
     target_abs_path_dir = abspath(join(working_dir, directory))
     
-    if (target_abs_path_dir.startswith(abs_path_working_dir)):
-        path_arr = clean_path_as_list(target_abs_path_dir)
-        target_supposed_working_directory = path_arr[-1]
-        if target_supposed_working_directory == working_dir or path_arr[-2] == working_dir:
-            return target_abs_path_dir
-        else:
-            return None
+    if (commonpath([target_abs_path_dir, abs_path_working_dir]) == abs_path_working_dir):
+        return target_abs_path_dir
     else:
         return None
     
