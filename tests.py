@@ -1,20 +1,31 @@
-from functions.get_file_content import get_file_content
 import unittest
+from functions.write_file import write_file
 
-class TestGetFileContent(unittest.TestCase):
+class TestWriteFile(unittest.TestCase):
 
-    def test_working_directory_read(self):
-        content = get_file_content("calculator", "main.py")
-        self.assertTrue("def main()" in content)
-        print(content)
+    def test_write_to_working_dir(self):
+        file = "lorem.txt"
+        result = write_file("target", file, "wait, this isn't lorem ipsum")
+        expected_length = len("wait, this isn't lorem ipsum")
+        expected = f'Successfully wrote to "{file}" ({expected_length} characters written)'
+        self.assertEqual(result, expected)
+        print(expected)
 
-    def test_subdirectory_read(self):
-        content = get_file_content("calculator", "pkg/calculator.py")
-        self.assertTrue("def evaluate(self, expression):" in content)
-        print(content)
+    def test_write_to_working_dir_subdirectory(self):
+        file = "pkg/morelorem.txt"
+        result = write_file("target", file, "lorem ipsum dolor sit amet")
+        expected_length = len("lorem ipsum dolor sit amet")
+        expected = f'Successfully wrote to "{file}" ({expected_length} characters written)'
+        self.assertEqual(result, expected)
+        print(expected)
 
-    def test_exceed_non_max_length(self):
-        self.assertEqual(get_file_content("calculator", "/bin/cat"), 'Error: "/bin/cat" tried to escape')
+    
+    def test_write_to_outside_working_dir(self):
+        file = "/tmp/temp.txt"
+        result = write_file("target", file, "this should not be allowed")
+        expected = f'Error: Cannot write to "{file}" as it is outside the permitted working directory'
+        self.assertEqual(result, expected)
+        print(expected)
 
 if __name__ == '__main__':
     unittest.main()

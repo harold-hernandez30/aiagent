@@ -1,13 +1,14 @@
 
 from os import listdir
 from os.path import isdir, getsize, isfile, abspath, join, commonpath
+from functions.escape_check import validate_escape
 import traceback
 
 def get_files_info(working_directory, directory=None):
 
     try:
 
-        target_dir = no_escape(working_directory, directory)
+        target_dir = validate_escape(working_directory, directory)
 
         if target_dir is None:
             return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
