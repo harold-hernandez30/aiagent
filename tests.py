@@ -1,31 +1,32 @@
 import unittest
-from functions.write_file import write_file
+from functions.run_python import run_python_file
 
-class TestWriteFile(unittest.TestCase):
+class TestRunPythonFile(unittest.TestCase):
 
-    def test_write_to_working_dir(self):
-        file = "lorem.txt"
-        result = write_file("target", file, "wait, this isn't lorem ipsum")
-        expected_length = len("wait, this isn't lorem ipsum")
-        expected = f'Successfully wrote to "{file}" ({expected_length} characters written)'
-        self.assertEqual(result, expected)
-        print(expected)
+    def test_run_main(self):
+        result = run_python_file("calculator", "main.py")
+        expected = 'Calculator App'
+        self.assertTrue(expected in result)
+        print(result)
 
-    def test_write_to_working_dir_subdirectory(self):
-        file = "pkg/morelorem.txt"
-        result = write_file("target", file, "lorem ipsum dolor sit amet")
-        expected_length = len("lorem ipsum dolor sit amet")
-        expected = f'Successfully wrote to "{file}" ({expected_length} characters written)'
-        self.assertEqual(result, expected)
-        print(expected)
+    def test_run_tests(self):
+        result = run_python_file("calculator", "tests.py")
+        expected = 'Ran'
+        self.assertTrue(expected in result)
+        print(result)
 
     
-    def test_write_to_outside_working_dir(self):
-        file = "/tmp/temp.txt"
-        result = write_file("target", file, "this should not be allowed")
-        expected = f'Error: Cannot write to "{file}" as it is outside the permitted working directory'
+    def test_run_outside_working_dir(self):
+        result = run_python_file("calculator", "../main.py")
+        expected = 'Error: Cannot execute "../main.py" as it is outside the permitted working directory'
         self.assertEqual(result, expected)
-        print(expected)
+        print(result)
+
+    def test_run_non_existent_file(self):
+        result = run_python_file("calculator", "nonexistent.py")
+        expected = 'Error: File "nonexistent.py" not found.' 
+        self.assertEqual(result, expected)
+        print(result)
 
 if __name__ == '__main__':
     unittest.main()
